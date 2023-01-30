@@ -23,11 +23,17 @@ import com.dapper.mapboxdemo.utils.Listener
 
 
 class DragAdapter(
-    var arrayList: MutableList<Int?>, var listener: Listener,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), View.OnTouchListener {
+    var arrayList: MutableList<Int?>, var listener: Listener,onClickListener: RecyclerClickListener,
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     val HEADERVIEW = 0
     val LISTVIEW = 1
-
+    private var onClickListener: RecyclerClickListener? = null
+    interface RecyclerClickListener{
+        fun onClickListener(image:Int, pos:Int)
+    }
+    init {
+        this.onClickListener = onClickListener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (getItemViewType(viewType)) {
@@ -99,13 +105,22 @@ class DragAdapter(
 
             LISTVIEW -> {
                 val listHolder = holder as ListViewHolder
+                listHolder.itemView.background.clearColorFilter()
+                listHolder.itemView.invalidate()
                 if (arrayList[position] != null) {
                     listHolder.tvGrid.visibility = View.VISIBLE
+                    listHolder.itemView.background.clearColorFilter()
+                    listHolder.itemView.invalidate()
                     arrayList[position]?.let {
                         listHolder.tvGrid.setImageResource(it)
                     }
+                    listHolder?.tvGrid?.setOnClickListener { arrayList[position]?.let { it1 ->
+                        onClickListener?.onClickListener(it1, position)
+                    } }
                 } else {
                     listHolder.tvGrid.visibility = View.GONE
+                    listHolder.itemView.background.clearColorFilter()
+                    listHolder.itemView.invalidate()
                 }
             }
         }
@@ -141,19 +156,5 @@ class DragAdapter(
         val iconIVTv = itemBinding.iconIVTv
 
     }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(view: View, event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            val data = ClipData.newPlainText("", "")
-            val shadowBuilder = View.DragShadowBuilder(view)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                view.startDragAndDrop(data, shadowBuilder, view, 0)
-            } else {
-                view.startDrag(data, shadowBuilder, view, 0)
-            }
-            return true
-        }
-        return false
-    }
+    
 }

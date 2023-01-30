@@ -1,11 +1,14 @@
 package com.dapper.mapboxdemo.ui
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,11 +25,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class Dashboard : AppCompatActivity(), Listener {
+class Dashboard : AppCompatActivity(), Listener, DragAdapter.RecyclerClickListener {
     private val binding: ActivityDashboardBinding by lazy {
         ActivityDashboardBinding.inflate(layoutInflater)
     }
-    val arrayList: MutableList<String> = ArrayList<String>()
+    private val arrayList: MutableList<String> = ArrayList<String>()
     private val intArrayList: MutableList<Int?> = ArrayList<Int?>()
     var adapter: DragAdapter? = null
     private var bottomListAdapter: MainAdapter? = null
@@ -127,22 +130,12 @@ class Dashboard : AppCompatActivity(), Listener {
 
     var draggedItemIndex: Int? = null
 
+    @SuppressLint("SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
     fun setTimeSlots() {
-        val firstDate = "18/01/2023"
-        val firstTime = "08:00 AM"
-        val secondDate = "18/01/2023"
-        val secondTime = "08:15 PM"
-
-        val format = "dd/MM/yyyy hh:mm a"
-
-        val sdf = SimpleDateFormat(format)
-
-        val dateObj1 = sdf.parse("$firstDate $firstTime")
-        val dateObj2 = sdf.parse("$secondDate $secondTime")
-        println("Date Start: $dateObj1")
-        println("Date End: $dateObj2")
-
+        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm a")
+        val dateObj1 = sdf.parse("18/01/2023 08:00 AM")
+        val dateObj2 = sdf.parse("18/01/2023 08:15 PM")
         var dif = dateObj1.time
         while (dif < dateObj2.time) {
             val slot = Date(dif)
@@ -158,7 +151,7 @@ class Dashboard : AppCompatActivity(), Listener {
         for (i in arrayList.indices) {
             intArrayList.add(null)
         }
-        adapter = DragAdapter(intArrayList, this)
+        adapter = DragAdapter(intArrayList, this, this)
         binding.Rv.setHasFixedSize(true)
         binding.Rv.adapter = adapter
 
@@ -179,15 +172,18 @@ class Dashboard : AppCompatActivity(), Listener {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder,
             ): Boolean {
-
                 draggedItemIndex = viewHolder.adapterPosition
                 val targetIndex = target.adapterPosition
                 if (targetIndex != 0 && draggedItemIndex != 0) {
                     Collections.swap(intArrayList, draggedItemIndex!!, targetIndex)
                     adapter!!.notifyItemMoved(draggedItemIndex!!, targetIndex)
+                    adapter?.notifyItemChanged(targetIndex)
+                    //adapter!!.notifyDataSetChanged()
                 }
                 Log.e("Dashboard",
                     "on move call drag index $draggedItemIndex target index $targetIndex")
+                Log.e("Dashboard",
+                    "after move arrayList $intArrayList")
                 return false
             }
 
@@ -205,6 +201,40 @@ class Dashboard : AppCompatActivity(), Listener {
         intArrayList[position] = list
         adapter!!.notifyItemChanged(position)
         Log.e("Dashboard", "new list $intArrayList")
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onClickListener(image: Int, pos: Int) {
+        val builder = AlertDialog.Builder(this)
+        //set title for alert dialog
+        builder.setTitle(R.string.dialogTitle)
+        //set message for alert dialog
+        builder.setMessage(R.string.dialogMessage)
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        //performing positive action
+        builder.setPositiveButton("Yes") { dialogInterface, which ->
+            intArrayList[pos] = null
+            adapter?.notifyItemChanged(pos)
+            bottomList.add(image)
+            bottomListAdapter?.notifyDataSetChanged()
+            Toast.makeText(applicationContext, "clicked yes", Toast.LENGTH_LONG).show()
+        }
+        //performing cancel action
+        builder.setNeutralButton("Cancel") { dialogInterface, which ->
+            Toast.makeText(applicationContext,
+                "clicked cancel\n operation cancel",
+                Toast.LENGTH_LONG).show()
+        }
+        //performing negative action
+        builder.setNegativeButton("No") { dialogInterface, which ->
+            Toast.makeText(applicationContext, "clicked No", Toast.LENGTH_LONG).show()
+        }
+        // Create the AlertDialog
+        val alertDialog: AlertDialog = builder.create()
+        // Set other dialog properties
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
 

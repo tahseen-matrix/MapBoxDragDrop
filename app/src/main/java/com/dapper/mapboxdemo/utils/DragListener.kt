@@ -1,8 +1,11 @@
 package com.dapper.mapboxdemo.utils
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.dapper.mapboxdemo.DragAdapter
 import com.dapper.mapboxdemo.MainAdapter
@@ -43,8 +46,25 @@ class DragListener internal constructor(listener: Listener) : View.OnDragListene
                     listener.setUpdateItem(list, target.getChildAdapterPosition(v))
                     Log.e("Dashboard", "${target.getChildAdapterPosition(v)}")
 
+                    v.background.clearColorFilter()
+                    v.invalidate()
+
                 }
 
+            }
+            DragEvent.ACTION_DRAG_ENDED->{
+                v.background.clearColorFilter()
+                v.invalidate()
+                if (event.result)
+                    Log.e("Dashboard", "The drop was handled.")
+                else
+                    Log.e("Dashboard", "The drop didn't work.")
+            }
+            DragEvent.ACTION_DRAG_LOCATION->{
+
+            } // this will show the location of the item that is being dragged
+            DragEvent.ACTION_DRAG_STARTED->{
+                v.background.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN)
             }
         }
         if (!isDropped && event.localState != null) {

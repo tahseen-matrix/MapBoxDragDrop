@@ -5,6 +5,7 @@
     android:id="@+id/cvGrid"
     android:layout_width="match_parent"
     android:background="@drawable/gray_border"
+    android:layout_marginVertical="@dimen/_2sdp"
     android:layout_height="@dimen/_50sdp">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -18,5 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
+
+
 
 </FrameLayout>
