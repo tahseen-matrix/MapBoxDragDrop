@@ -4,11 +4,8 @@ package com.dapper.mapboxdemo
  * Created By Tahseen Khan on 18/01/23.
  */
 
-import android.R
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.dapper.mapboxdemo.databinding.SlotViewBinding
 

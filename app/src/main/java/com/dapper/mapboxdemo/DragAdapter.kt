@@ -4,12 +4,7 @@ package com.dapper.mapboxdemo
  * Created By Tahseen Khan on 18/01/23.
  */
 
-import android.annotation.SuppressLint
-import android.content.ClipData
-import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -60,19 +55,6 @@ class DragAdapter(
         }
 
 
-    }
-
-    fun updateItem(list: Int, position: Int) {
-        arrayList.add(position, list)
-    }
-
-    fun getDragInstance(): DragListener? {
-        return if (listener != null) {
-            DragListener(listener)
-        } else {
-            Log.e("ListAdapter", "Listener wasn't initialized!")
-            null
-        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -140,21 +122,18 @@ class DragAdapter(
     }
 
     class ListViewHolder(
-        private val itemBinding: ImageLayoutBinding,
+        itemBinding: ImageLayoutBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         var tvGrid: ImageView = itemBinding.image
-        var cvGrid: FrameLayout = itemBinding.cvGrid
-
-
     }
 
     class HeaderViewHoler(
-        private val itemBinding: StartEndLayoutBinding,
+        itemBinding: StartEndLayoutBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         val titleTv = itemBinding.titleTv
         val startEndTv = itemBinding.startEndTv
         val iconIVTv = itemBinding.iconIVTv
 
     }
-    
+
 }

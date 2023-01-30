@@ -27,25 +27,12 @@ class MainAdapter(var list: MutableList<Int>) :
         holder.tvGrid.setImageResource(list[position])
         holder.cvGrid.tag = position
         holder.cvGrid.setOnLongClickListener(longClickListener)
-        /*   holder.cvGrid.setOnDragListener(DragListener(listener))*/
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-
-    fun updateList(list: MutableList<Int>) {
-        this.list = list
-    }
-
-    /*  val dragInstance: DragListener?
-          get() = if (listener != null) {
-              DragListener(listener)
-          } else {
-              null
-          }
-  */
     inner class ListViewHolder(itemView: View) : ViewHolder(itemView) {
         var tvGrid: ImageView
         var cvGrid: FrameLayout

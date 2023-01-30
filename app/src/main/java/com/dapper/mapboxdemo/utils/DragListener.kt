@@ -5,7 +5,6 @@ import android.graphics.PorterDuff
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.dapper.mapboxdemo.DragAdapter
 import com.dapper.mapboxdemo.MainAdapter
